@@ -1,6 +1,6 @@
 
-var MailListener = require("mail-listener2");
-const simpleParser = require('mailparser').simpleParser;
+var {MailListener} = require("mail-listener5");
+
 
 var mailListener = new MailListener({
   username: "vijayakumar.vellaisamy@kumaran.com",
@@ -29,13 +29,16 @@ mailListener.start(); // start listening
 mailListener.on("server:connected", function(){
   console.log("imapConnected");
 });
+mailListener.on('server:disconnected', () => 
+{ console.log('imapDisconnected'); mailListener.stop(); mailListener.start((console.log("SERVER RESTARTED"))); });
  
-mailListener.on("server:disconnected", function(){
-  console.log("imapDisconnected");
-});
+// mailListener.on("server:disconnected", function(){
+//   console.log("imapDisconnected");
+// });
  
 mailListener.on("error", function(err){
-  console.log(err);
+  console.log("VIJAY ERROR",err);
+  mailListener.stop(); mailListener.start((console.log("SERVER RESTARTED ERROR")))
 });
  
 mailListener.on("mail", async function(mail, seqno, attributes){
@@ -46,7 +49,7 @@ mailListener.on("mail", async function(mail, seqno, attributes){
   
   let parsed = await simpleParser(mail.text);
   //console.log("&&&&&", parsed.to.value)
-  console.log("&&&&&", parsed.text)
+  console.log("&&&&&", mail.text)
   // mail processing code goes here
 });
  
@@ -56,3 +59,12 @@ mailListener.on("attachment", function(attachment){
  
 // it's possible to access imap object from node-imap library for performing additional actions. E.x.
 //mailListener.imap.move(:msguids, :mailboxes, function(){})
+
+// var regExp = /\(([^)]+)\)/;
+// var matches = regExp.exec("(I expect five hundred dollars$500)");
+
+// //matches[1] contains the value between the parentheses
+// console.log(matches[1]);
+
+//matches[1] contains the va
+
